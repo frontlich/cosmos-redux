@@ -1,6 +1,6 @@
 {
   "name": "cosmos-redux",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -55,5 +55,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.1",
     "react-redux": "^7.2.3"
-  }
+  },
+  "repository": "https://github.com/frontlich/cosmos-redux.git"
 }

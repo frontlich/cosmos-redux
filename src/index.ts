@@ -5,22 +5,18 @@ import {
   configureStore,
   ConfigureStoreOptions,
   EnhancedStore,
-  Middleware,
   Reducer,
   ReducersMapObject,
-  Slice,
 } from '@reduxjs/toolkit';
 
 import plugin from './plugin';
-import { FunctionParam, Plugin } from './types';
+import { FunctionParam, Middlewares, ReduxApp } from './types';
 
 export * from './plugins';
 export * from './hooks';
 export * from './thunks';
 export * from './selectors';
 export * from './model';
-
-type Middlewares<S> = ReadonlyArray<Middleware<{}, S>>;
 
 interface StoreOptions<
   S = any,
@@ -35,9 +31,10 @@ export const configStore = <
   A extends Action = AnyAction,
   M extends Middlewares<S> = Middlewares<S>
 >(
-  options?: StoreOptions<S, A, M>,
+  options?: StoreOptions<S, A, M>
 ): EnhancedStore<S, A, M> => {
-  const { reducer, middleware, devTools, preloadedState = {}, enhancers = [] } = options || {};
+  const { reducer, middleware, devTools, preloadedState = {}, enhancers = [] } =
+    options || {};
 
   const pluginReducer = plugin.get('reducer');
   const pluginMiddleware = plugin.get('middleware');
@@ -51,8 +48,9 @@ export const configStore = <
 
     middleware: (typeof middleware === 'function'
       ? (getDefaultMiddleware: any) => {
-          const curriedGetMiddleware = (option: FunctionParam<typeof getDefaultMiddleware>) =>
-            getDefaultMiddleware(option).concat(pluginMiddleware);
+          const curriedGetMiddleware = (
+            option: FunctionParam<typeof getDefaultMiddleware>
+          ) => getDefaultMiddleware(option).concat(pluginMiddleware);
 
           return middleware(curriedGetMiddleware);
         }
@@ -63,7 +61,8 @@ export const configStore = <
     preloadedState: Object.assign({}, ...pluginPreloadState, preloadedState),
 
     enhancers: (typeof enhancers === 'function'
-      ? (defaultEnhancers: any) => enhancers([...defaultEnhancers, ...pluginEnhancers] as any[])
+      ? (defaultEnhancers: any) =>
+          enhancers([...defaultEnhancers, ...pluginEnhancers] as any[])
       : [...pluginEnhancers, ...enhancers]) as any,
   });
 
@@ -75,25 +74,25 @@ export const configReduxApp = <
   A extends Action = AnyAction,
   M extends Middlewares<S> = Middlewares<S>
 >(
-  options?: StoreOptions<S, A, M>,
-) => {
+  options?: StoreOptions<S, A, M>
+): ReduxApp<S, A, M> => {
   let store: EnhancedStore<S, A, M>;
   const asyncReducers: Record<string, Reducer> = {};
 
   return {
-    addPlugin(p: Plugin) {
+    addPlugin(p) {
       plugin.add(p);
       return this;
     },
-    complete(callback?: () => void) {
+    complete(cb) {
       store = configStore(options);
-      typeof callback === 'function' && callback();
+      typeof cb === 'function' && cb();
       return this;
     },
     getStore() {
       return store || configStore(options);
     },
-    useSlice(slice: Slice) {
+    injectSlice(slice) {
       if (process.env.NODE_ENV === 'development') {
         if (!store) {
           throw new Error('this method cannot be used before complete');
@@ -102,7 +101,7 @@ export const configReduxApp = <
 
       if (asyncReducers[slice.name]) {
         // 防止重复注入
-        return;
+        return this;
       }
 
       asyncReducers[slice.name] = slice.reducer;
@@ -113,9 +112,19 @@ export const configReduxApp = <
       }) as any;
 
       store.replaceReducer(reducer);
+      return this;
     },
-    useModel(model: Slice) {
-      this.useSlice(model);
+    injectModel(model) {
+      return this.injectSlice(model);
+    },
+
+    /** @deprecated */
+    useSlice(slice) {
+      return this.injectSlice(slice);
+    },
+    /** @deprecated */
+    useModel(model) {
+      return this.injectModel(model);
     },
   };
 };
