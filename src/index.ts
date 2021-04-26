@@ -8,6 +8,7 @@ import {
   Reducer,
   ReducersMapObject,
 } from '@reduxjs/toolkit';
+import { createModel } from './model';
 
 import plugin from './plugin';
 import { FunctionParam, Middlewares, ReduxApp } from './types';
@@ -91,6 +92,11 @@ export const configReduxApp = <
     },
     getStore() {
       return store || configStore(options);
+    },
+    createModel(options) {
+      const model = createModel(options);
+      this.injectModel(model);
+      return model;
     },
     injectSlice(slice) {
       if (process.env.NODE_ENV === 'development') {

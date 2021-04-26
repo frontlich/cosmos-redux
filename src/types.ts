@@ -7,6 +7,8 @@ import {
 } from '@reduxjs/toolkit';
 import { Middleware, ReducersMapObject, StoreEnhancer } from 'redux';
 
+import { createModel } from './model';
+
 export type Interceptor = (
   next: AsyncThunkPayloadCreator<any>
 ) => AsyncThunkPayloadCreator<any>;
@@ -36,6 +38,7 @@ export type ReduxApp<
   addPlugin(p: Plugin): ReduxApp<S, A, M>;
   complete(callback?: () => void): ReduxApp<S, A, M>;
   getStore(): EnhancedStore<S, A, M>;
+  createModel: typeof createModel;
   injectSlice(slice: Slice): ReduxApp<S, A, M>;
   injectModel(model: Slice): ReduxApp<S, A, M>;
 

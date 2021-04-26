@@ -1,7 +1,7 @@
 # Cosmos Redux
 
-[![npm version](https://img.shields.io/npm/v/cosmos-redux.svg?style=flat-square)](https://www.npmjs.com/package/cosmos-redux)
-[![npm downloads](https://img.shields.io/npm/dm/cosmos-redux.svg?style=flat-square&label=downloads](https://www.npmjs.com/package/cosmos-redux)
+[![npm version](https://img.shields.io/npm/v/cosmos-redux.svg)](https://www.npmjs.com/package/cosmos-redux)
+[![npm downloads](https://img.shields.io/npm/dm/cosmos-redux.svg)](https://www.npmjs.com/package/cosmos-redux)
 
 **对redux toolkit的再次封装**
 

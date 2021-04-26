@@ -7,6 +7,7 @@ import {
 } from '@reduxjs/toolkit';
 import { createSelectors } from './selectors';
 import { ThunksActions, getCreateThunks } from './thunks';
+import { ReduxApp } from './types';
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
 
@@ -19,7 +20,7 @@ interface CreateModelOptions<
   thunks?: T;
   thunksBuilder?: (
     thunkActions: ThunksActions<T>,
-    builder: ActionReducerMapBuilder<NoInfer<S>>,
+    builder: ActionReducerMapBuilder<NoInfer<S>>
   ) => void;
 }
 
@@ -28,21 +29,38 @@ export const createModel = <
   CaseReducer extends SliceCaseReducers<State>,
   Thunks extends Record<string, AsyncThunkPayloadCreator<any, any>>
 >(
-  options: CreateModelOptions<State, CaseReducer, Thunks>,
+  options: CreateModelOptions<State, CaseReducer, Thunks>
 ) => {
-  const { thunks: thunkCreators, thunksBuilder, extraReducers, ...sliceOptions } = options;
+  const {
+    thunks: thunkCreators,
+    thunksBuilder,
+    extraReducers,
+    ...sliceOptions
+  } = options;
 
   const createThunks = getCreateThunks(options.name);
-  const thunks = thunkCreators ? createThunks(thunkCreators) : ({} as ThunksActions<Thunks>);
+  const thunks = thunkCreators
+    ? createThunks(thunkCreators)
+    : ({} as ThunksActions<Thunks>);
 
   const slice = createSlice({
     ...sliceOptions,
-    extraReducers: (builder) => {
+    extraReducers: builder => {
       typeof extraReducers === 'function' && extraReducers(builder);
-      typeof thunksBuilder === 'function' && thunks && thunksBuilder(thunks, builder);
+      typeof thunksBuilder === 'function' &&
+        thunks &&
+        thunksBuilder(thunks, builder);
     },
   });
 
   const selectors = createSelectors(slice.name, options.initialState);
   return { ...slice, thunks, selectors };
+};
+
+export const getCreateModelWidthApp = (app: ReduxApp): typeof createModel => {
+  return options => {
+    const model = createModel(options);
+    app.injectSlice(model);
+    return model;
+  };
 };
