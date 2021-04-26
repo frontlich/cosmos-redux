@@ -105,7 +105,9 @@ export const configReduxApp = <
         }
       }
 
-      if (asyncReducers[slice.name]) {
+      const initialReducers = (store as any).__reducers;
+
+      if (asyncReducers[slice.name] || initialReducers[slice.name]) {
         // 防止重复注入
         return this;
       }
@@ -113,9 +115,9 @@ export const configReduxApp = <
       asyncReducers[slice.name] = slice.reducer;
 
       const reducer = combineReducers({
-        ...(store as any).__reducers,
+        ...initialReducers,
         ...asyncReducers,
-      }) as any;
+      }) as Reducer;
 
       store.replaceReducer(reducer);
       return this;
