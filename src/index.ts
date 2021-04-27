@@ -4,6 +4,7 @@ import {
   combineReducers,
   configureStore,
   ConfigureStoreOptions,
+  createSlice,
   EnhancedStore,
   Reducer,
   ReducersMapObject,
@@ -92,6 +93,11 @@ export const configReduxApp = <
     },
     getStore() {
       return store || configStore(options);
+    },
+    createSlice(options) {
+      const slice = createSlice(options);
+      this.injectSlice(slice);
+      return slice;
     },
     createModel(options) {
       const model = createModel(options);

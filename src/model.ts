@@ -11,28 +11,34 @@ import { ReduxApp } from './types';
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
 
+type ThunksMap = Record<
+  string,
+  AsyncThunkPayloadCreator<any, any, { state: any }>
+>;
+
+type ThunksBuilder<S, T extends ThunksMap> = (
+  thunkActions: ThunksActions<T>,
+  builder: ActionReducerMapBuilder<NoInfer<S>>
+) => void;
+
 interface CreateModelOptions<
   S,
   CR extends SliceCaseReducers<S>,
-  T extends Record<string, AsyncThunkPayloadCreator<any, any, { state: any }>>
+  T extends ThunksMap,
+  TB
 > extends CreateSliceOptions<S, CR> {
   extraReducers?: (builder: ActionReducerMapBuilder<NoInfer<S>>) => void;
   thunks?: T;
-  thunksBuilder?: (
-    thunkActions: ThunksActions<T>,
-    builder: ActionReducerMapBuilder<NoInfer<S>>
-  ) => void;
+  thunksBuilder?: TB;
 }
 
 export const createModel = <
   State,
   CaseReducer extends SliceCaseReducers<State>,
-  Thunks extends Record<
-    string,
-    AsyncThunkPayloadCreator<any, any, { state: any }>
-  >
+  Thunks extends ThunksMap,
+  TBuilder extends ThunksBuilder<State, Thunks>
 >(
-  options: CreateModelOptions<State, CaseReducer, Thunks>
+  options: CreateModelOptions<State, CaseReducer, Thunks, TBuilder>
 ) => {
   const {
     thunks: thunkCreators,
