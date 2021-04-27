@@ -23,10 +23,9 @@ export const createSelectors = <T, State = any>(
       if (Object.prototype.hasOwnProperty.call(currState, key)) {
         const value = currState[key];
         const currSelector = createSelector(preSelector, s => s[key]);
-        if (typeof value !== 'object' || value === null) {
-          currMap[key] = currSelector;
-        } else {
-          currMap[key] = getSelector(value, currMap[key], currSelector);
+        currMap[key] = currSelector;
+        if (typeof value === 'object' && value !== null) {
+          getSelector(value, currMap[key], currSelector);
         }
       }
     }
