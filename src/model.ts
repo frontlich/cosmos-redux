@@ -14,7 +14,7 @@ type NoInfer<T> = [T][T extends any ? 0 : never];
 interface CreateModelOptions<
   S,
   CR extends SliceCaseReducers<S>,
-  T extends Record<string, AsyncThunkPayloadCreator<any, any>>
+  T extends Record<string, AsyncThunkPayloadCreator<any, any, { state: any }>>
 > extends CreateSliceOptions<S, CR> {
   extraReducers?: (builder: ActionReducerMapBuilder<NoInfer<S>>) => void;
   thunks?: T;
@@ -27,7 +27,10 @@ interface CreateModelOptions<
 export const createModel = <
   State,
   CaseReducer extends SliceCaseReducers<State>,
-  Thunks extends Record<string, AsyncThunkPayloadCreator<any, any>>
+  Thunks extends Record<
+    string,
+    AsyncThunkPayloadCreator<any, any, { state: any }>
+  >
 >(
   options: CreateModelOptions<State, CaseReducer, Thunks>
 ) => {
