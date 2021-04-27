@@ -25,6 +25,11 @@ export const createSelectors = <T, State = any>(
         const currSelector = createSelector(preSelector, s => s[key]);
         currMap[key] = currSelector;
         if (typeof value === 'object' && value !== null) {
+          if (process.env.NODE_ENV === 'development') {
+            if (key in currSelector) {
+              throw new Error(`创建selectors时，state中的属性名不能为${key}`);
+            }
+          }
           getSelector(value, currMap[key], currSelector);
         }
       }
