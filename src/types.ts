@@ -6,8 +6,11 @@ import {
   Dispatch,
   EnhancedStore,
   Slice,
+  Reducer,
+  ReducersMapObject,
+  Middleware,
+  StoreEnhancer,
 } from '@reduxjs/toolkit';
-import { Middleware, ReducersMapObject, StoreEnhancer } from 'redux';
 
 import { createModel } from './model';
 
@@ -42,6 +45,8 @@ export type ReduxApp<
   getStore(): EnhancedStore<S, A, M>;
   createModel: typeof createModel;
   createSlice: typeof createSlice;
+  addReducer(name: string, reducer: Reducer): ReduxApp<S, A, M>;
+  removeReducer(name: string): ReduxApp<S, A, M>;
   injectSlice(slice: Slice): ReduxApp<S, A, M>;
   injectModel(model: Slice): ReduxApp<S, A, M>;
 

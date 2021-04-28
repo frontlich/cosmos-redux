@@ -104,7 +104,7 @@ export const configReduxApp = <
       this.injectModel(model);
       return model;
     },
-    injectSlice(slice) {
+    addReducer(name, reducer) {
       if (process.env.NODE_ENV === 'development') {
         if (!store) {
           throw new Error('this method cannot be used before complete');
@@ -113,23 +113,53 @@ export const configReduxApp = <
 
       const initialReducers = (store as any).__reducers;
 
-      if (asyncReducers[slice.name] || initialReducers[slice.name]) {
+      if (asyncReducers[name] || initialReducers[name]) {
         // 防止重复注入
         return this;
       }
 
-      asyncReducers[slice.name] = slice.reducer;
+      asyncReducers[name] = reducer;
 
-      const reducer = combineReducers({
+      const allRreducer = combineReducers({
         ...initialReducers,
         ...asyncReducers,
       }) as Reducer;
 
-      store.replaceReducer(reducer);
+      store.replaceReducer(allRreducer);
       return this;
     },
+    removeReducer(name) {
+      const initialReducers = (store as any).__reducers;
+
+      const replace = () => {
+        const allRreducer = combineReducers({
+          ...initialReducers,
+          ...asyncReducers,
+        }) as Reducer;
+
+        store.replaceReducer(allRreducer);
+      };
+
+      if (asyncReducers[name]) {
+        delete asyncReducers[name];
+        replace();
+        return this;
+      }
+
+      if (initialReducers[name]) {
+        delete initialReducers[name];
+        replace();
+        return this;
+      }
+
+      console.warn(`${name}对应的reducer不存在`);
+      return this;
+    },
+    injectSlice(slice) {
+      return this.addReducer(slice.name, slice.reducer);
+    },
     injectModel(model) {
-      return this.injectSlice(model);
+      return this.addReducer(model.name, model.reducer);
     },
 
     /** @deprecated */
