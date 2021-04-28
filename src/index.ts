@@ -19,6 +19,7 @@ export * from './hooks';
 export * from './thunks';
 export * from './selectors';
 export * from './model';
+export * from './types';
 
 interface StoreOptions<
   S = any,

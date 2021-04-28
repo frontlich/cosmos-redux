@@ -31,7 +31,7 @@ import { configReduxApp } from 'cosmos-redux';
  */
 const options = {};
 
-export const app = configReduxApp();
+export const app = configReduxApp(options);
 ```
 
 ```tsx
@@ -59,7 +59,7 @@ import { configReduxApp, thunkLoadingPlugin } from 'cosmos-redux';
  */
 const options = {};
 
-export const app = configReduxApp();
+export const app = configReduxApp(options);
 
 app.addPlugin(thunkLoadingPlugin);
 ```
