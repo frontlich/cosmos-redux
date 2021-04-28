@@ -11,32 +11,33 @@ export const createSelectors = <T, State = any>(
   initialState: T
 ): SelectorMap<T, State> => {
   const rootSelector = (state: any) => state[name];
-  const selectorMap = JSON.parse(JSON.stringify(initialState));
 
-  const getSelector = (
-    currState: any,
-    currMap: any,
-    preSelector: (s: any) => any
-  ) => {
+  const getSelector = (currState: any, preSelector: (s: any) => any) => {
+    const selectorMap = {} as any;
     // eslint-disable-next-line no-restricted-syntax
     for (const key in currState) {
       if (Object.prototype.hasOwnProperty.call(currState, key)) {
         const value = currState[key];
-        const currSelector = createSelector(preSelector, s => s[key]);
-        currMap[key] = currSelector;
+        const currSelector: any = createSelector(preSelector, s => s[key]);
+
         if (typeof value === 'object' && value !== null) {
           if (process.env.NODE_ENV === 'development') {
             if (key in currSelector) {
               throw new Error(`创建selectors时，state中的属性名不能为${key}`);
             }
           }
-          getSelector(value, currMap[key], currSelector);
+          selectorMap[key] = Object.assign(
+            currSelector,
+            getSelector(value, currSelector)
+          );
+        } else {
+          selectorMap[key] = currSelector;
         }
       }
     }
+
+    return selectorMap;
   };
 
-  getSelector(initialState, selectorMap, rootSelector);
-
-  return selectorMap;
+  return getSelector(initialState, rootSelector);
 };
