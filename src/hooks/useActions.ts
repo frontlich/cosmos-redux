@@ -21,9 +21,24 @@ type BindedCreators<T extends ActionCreatorsMapObject> = {
   [K in keyof T]: AsyncAction<T[K]>;
 };
 
-export const useActions = <T extends ActionCreatorsMapObject>(actions: T): BindedCreators<T> => {
+export function useActions<T extends ActionCreatorsMapObject>(
+  actions: T
+): BindedCreators<T>;
+export function useActions<
+  T1 extends ActionCreatorsMapObject,
+  T2 extends ActionCreatorsMapObject
+>(actions1: T1, actions2: T2): BindedCreators<T1> & BindedCreators<T2>;
+export function useActions<
+  T1 extends ActionCreatorsMapObject,
+  T2 extends ActionCreatorsMapObject,
+  T3 extends ActionCreatorsMapObject,
+>(actions1: T1, actions2: T2, actions3: T3): BindedCreators<T1> & BindedCreators<T2> & BindedCreators<T3>;
+export function useActions(...actions: any[]) {
   const dispatch = useDispatch();
   return useMemo(() => {
-    return bindActionCreators<T, BindedCreators<T>>(actions, dispatch);
+    return bindActionCreators(
+      Object.assign({}, ...actions),
+      dispatch
+    );
   }, [actions, dispatch]);
-};
+}

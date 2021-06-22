@@ -8,11 +8,15 @@ import {
   EnhancedStore,
   Reducer,
   ReducersMapObject,
+  PayloadAction,
 } from '@reduxjs/toolkit';
-import { createModel } from './model';
 
+import { createModel } from './model';
 import plugin from './plugin';
 import { FunctionParam, Middlewares, ReduxApp } from './types';
+
+export { PayloadAction };
+export { useSelector } from 'react-redux';
 
 export * from './plugins';
 export * from './hooks';
