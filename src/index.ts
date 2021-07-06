@@ -97,7 +97,7 @@ export const configReduxApp = <
       return this;
     },
     getStore() {
-      return store || configStore(options);
+      return store || (store = configStore(options));
     },
     createSlice(options) {
       const slice = createSlice(options);
