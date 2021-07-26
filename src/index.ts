@@ -29,8 +29,8 @@ interface StoreOptions<
   S = any,
   A extends Action = AnyAction,
   M extends Middlewares<S> = Middlewares<S>
-> extends ConfigureStoreOptions<S, A, M> {
-  reducer: ReducersMapObject<S, A>;
+> extends Partial<ConfigureStoreOptions<S, A, M>> {
+  reducer?: ReducersMapObject<S, A>;
 }
 
 export const configStore = <
@@ -50,8 +50,13 @@ export const configStore = <
 
   const reducers = Object.assign({}, ...pluginReducer, reducer || {});
 
+  const finalReducer =
+    Object.keys(reducers).length > 0
+      ? combineReducers(reducers)
+      : (s: any) => s;
+
   const store = configureStore({
-    reducer: combineReducers(reducers),
+    reducer: finalReducer,
 
     middleware: (typeof middleware === 'function'
       ? (getDefaultMiddleware: any) => {
