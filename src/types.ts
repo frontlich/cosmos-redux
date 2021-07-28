@@ -11,6 +11,7 @@ import {
   Middleware,
   StoreEnhancer,
 } from '@reduxjs/toolkit';
+import { BaseThunkAPI as ToolkitBaseThunkAPI } from '@reduxjs/toolkit/dist/createAsyncThunk';
 
 import { createModel } from './model';
 
@@ -56,23 +57,11 @@ export type ReduxApp<
   useModel(model: Slice): ReduxApp<S, A, M>;
 };
 
-declare class RejectWithValue<RejectValue> {
-  readonly payload: RejectValue;
-  name: string;
-  message: string;
-  constructor(payload: RejectValue);
-}
-
 export type BaseThunkAPI<
-  S = any,
-  E = unknown,
+  State = unknown,
+  RejectedValue = unknown,
+  RejectedMeta = unknown,
+  FulfilledMeta = unknown,
+  Extra = unknown,
   D extends Dispatch = Dispatch,
-  RejectedValue = unknown
-> = {
-  dispatch: D;
-  getState: () => S;
-  extra: E;
-  requestId: string;
-  signal: AbortSignal;
-  rejectWithValue(value: RejectedValue): RejectWithValue<RejectedValue>;
-};
+> = ToolkitBaseThunkAPI<State, Extra, D, RejectedValue, RejectedMeta, FulfilledMeta>;
