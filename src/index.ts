@@ -13,7 +13,7 @@ import {
 
 import { createModel } from './model';
 import plugin from './plugin';
-import { FunctionParam, Middlewares, ReduxApp } from './types';
+import { Middlewares, ReduxApp } from './types';
 
 export { PayloadAction };
 export { useSelector } from 'react-redux';
@@ -58,15 +58,18 @@ export const configStore = <
   const store = configureStore({
     reducer: finalReducer,
 
-    middleware: (typeof middleware === 'function'
-      ? (getDefaultMiddleware: any) => {
-          const curriedGetMiddleware = (
-            option: FunctionParam<typeof getDefaultMiddleware>
-          ) => getDefaultMiddleware(option).concat(pluginMiddleware);
-
-          return middleware(curriedGetMiddleware);
-        }
-      : [...pluginMiddleware, ...(middleware || [])]) as any,
+    middleware: getDefaultMiddleware => {
+      if (typeof middleware === 'function') {
+        return middleware(
+          options =>
+            [...getDefaultMiddleware(options), ...pluginMiddleware] as any
+        );
+      } else if (Array.isArray(middleware)) {
+        return [...pluginMiddleware, ...middleware];
+      } else {
+        return getDefaultMiddleware() as any;
+      }
+    },
 
     devTools,
 
