@@ -7,7 +7,7 @@ const add = (plugin: Plugin) => {
 };
 
 function get<K extends keyof Plugin>(key: K): Exclude<Plugin[K], undefined>[] {
-  return plugins.map((p) => p[key]).filter(Boolean);
+  return plugins.map((p) => p && p[key]).filter(Boolean);
 }
 
 export const plugin = { add, get };

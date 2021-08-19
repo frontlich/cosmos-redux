@@ -50,11 +50,6 @@ export type ReduxApp<
   removeReducer(name: string): ReduxApp<S, A, M>;
   injectSlice(slice: Slice): ReduxApp<S, A, M>;
   injectModel(model: Slice): ReduxApp<S, A, M>;
-
-  /** @deprecated please repleace this method with injectSlice */
-  useSlice(slice: Slice): ReduxApp<S, A, M>;
-  /** @deprecated please repleace this method with injectModel */
-  useModel(model: Slice): ReduxApp<S, A, M>;
 };
 
 export type BaseThunkAPI<

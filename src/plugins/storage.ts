@@ -8,11 +8,12 @@ interface Storage {
 }
 
 interface StorageConfig {
+  enable?: boolean;
   storageKey?: string;
   storage?: Storage;
   include?: string[];
-  exclude?: string[]
-};
+  exclude?: string[];
+}
 
 const session = {
   set(key: string, v: object) {
@@ -22,25 +23,36 @@ const session = {
   get(key: string) {
     return JSON.parse(sessionStorage.getItem(key) || '{}');
   },
+
+  remove(key: string) {
+    sessionStorage.removeItem(key);
+  }
 };
 
 export function createStoragePlugin(config: StorageConfig): Plugin {
   const {
+    enable = true,
     storageKey = defaultStorageToken,
     storage = session,
     include = [],
     exclude = [],
   } = config || {};
+
+  if (!enable) {
+    sessionStorage.removeItem(storageKey);
+    return {};
+  }
+
   return {
     preloadState: storage.get(storageKey),
     enhancers: next => (...args) => {
       const store = next(...args);
       store.subscribe(() => {
         const state: any = store.getState();
-        
+
         if (include && include.length) {
           const cache: any = {};
-          include.forEach(key => cache[key] = state[key])
+          include.forEach(key => (cache[key] = state[key]));
           storage.set(storageKey, cache);
           return;
         }
@@ -61,4 +73,4 @@ export function createStoragePlugin(config: StorageConfig): Plugin {
 }
 
 /** 将store数据缓存到本地的插件 */
-export const storagePlugin = createStoragePlugin({exclude: []});
+export const storagePlugin = createStoragePlugin({ exclude: [] });

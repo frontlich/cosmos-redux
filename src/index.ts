@@ -174,14 +174,5 @@ export const configReduxApp = <
     injectModel(model) {
       return this.addReducer(model.name, model.reducer);
     },
-
-    /** @deprecated */
-    useSlice(slice) {
-      return this.injectSlice(slice);
-    },
-    /** @deprecated */
-    useModel(model) {
-      return this.injectModel(model);
-    },
   };
 };
