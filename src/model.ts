@@ -1,20 +1,16 @@
 import {
   ActionReducerMapBuilder,
-  AsyncThunkPayloadCreator,
   createSlice,
   CreateSliceOptions,
   SliceCaseReducers,
 } from '@reduxjs/toolkit';
 import { createSelectors } from './selectors';
-import { ThunksActions, getCreateThunks } from './thunks';
+import { ThunksActions, getCreateThunks, ThunkCreator } from './thunks';
 import { ReduxApp } from './types';
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
 
-type ThunksMap = Record<
-  string,
-  AsyncThunkPayloadCreator<any, any, { state: any }>
->;
+type ThunksMap = Record<string, ThunkCreator>;
 
 type ThunksBuilder<S, T extends ThunksMap> = (
   thunkActions: ThunksActions<T>,

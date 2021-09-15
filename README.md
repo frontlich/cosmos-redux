@@ -127,7 +127,7 @@ import { Table } from 'antd';
 import { actions, thunks, selectors } from './model';
 
 const TodoList = () => {
-  const actions = useActions({ ...actions, ...thunks });
+  const actions = useActions(actions, thunks);
   const loading = useThunkLoading(thunks.getTodoList);
   const todoList = useSelector(selectors.todoList);
 
