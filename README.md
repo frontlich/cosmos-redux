@@ -31,15 +31,15 @@ import { configReduxApp } from 'cosmos-redux';
  */
 const options = {};
 
-export const app = configReduxApp(options);
+export const app = configReduxApp(options).complete();
+
+export const store = app.getStore();
 ```
 
 ```tsx
 // app.tsx
-import { Provider } from 'react-redux';
-import { app } from 'utils/redux';
-
-const store = app.getStore();
+import { Provider } from 'cosmos-redux';
+import { store } from 'utils/redux';
 
 // render
 <Provider store={store}>
@@ -61,7 +61,7 @@ const options = {};
 
 export const app = configReduxApp(options);
 
-app.addPlugin(thunkLoadingPlugin);
+app.addPlugin(thunkLoadingPlugin).complete();
 ```
 
 ### 创建model
@@ -120,8 +120,7 @@ selectors 是一个选择属性的函数的集合
 
 ```tsx
 import React, { useEffect } from 'react';
-import { useActions, useThunkLoading } from 'cosmos-redux';
-import { useSelector } from 'react-redux';
+import { useActions, useThunkLoading, useSelector } from 'cosmos-redux';
 import { Table } from 'antd';
 
 import { actions, thunks, selectors } from './model';

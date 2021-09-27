@@ -6,11 +6,32 @@ import {
 } from '@reduxjs/toolkit';
 import { FunctionParam, PromiseValue } from './types';
 
+/**
+ * @deprecated
+ */
+type ThunkCreatorWithOptionsOld<S, R> = [
+  AsyncThunkPayloadCreator<R, any, { state: S }>,
+  AsyncThunkOptions
+];
+
+type ThunkCreatorWithOptions<S = any, R = any> = {
+  thunk: AsyncThunkPayloadCreator<R, any, { state: S }>;
+  options?: AsyncThunkOptions;
+};
+
 export type ThunkCreator<S = any, R = any> =
   | AsyncThunkPayloadCreator<R, any, { state: S }>
-  | [AsyncThunkPayloadCreator<R, any, { state: S }>, AsyncThunkOptions];
+  | ThunkCreatorWithOptionsOld<S, R>
+  | ThunkCreatorWithOptions<S, R>;
 
-type ReturnCreator<T extends ThunkCreator> = T extends [infer U, AsyncThunkOptions] ? U : T;
+type ReturnCreator<T extends ThunkCreator> = T extends {
+  thunk: infer U;
+  options?: AsyncThunkOptions;
+}
+  ? U
+  : T extends [infer O, AsyncThunkOptions]
+  ? O
+  : T;
 
 export type ThunksActions<T extends Record<string, ThunkCreator>> = {
   [K in keyof T]: AsyncThunk<
@@ -32,8 +53,14 @@ export const getCreateThunks = <S>(name: string) => {
       if (typeof payloadCreator === 'function') {
         thunkCreator = createAsyncThunk(type, payloadCreator);
       } else {
-        const [creator, options] = payloadCreator;
-        thunkCreator = createAsyncThunk(type, creator, options);
+        if (Array.isArray(payloadCreator)) {
+          const [creator, options] = payloadCreator;
+          thunkCreator = createAsyncThunk(type, creator, options);
+        } else {
+          const { thunk, options } = payloadCreator;
+          const asyncThunk = createAsyncThunk(type, thunk, options);
+          thunkCreator = asyncThunk;
+        }
       }
       thunksMap[key] = thunkCreator;
     });

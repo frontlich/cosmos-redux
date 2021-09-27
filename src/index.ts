@@ -16,7 +16,7 @@ import plugin from './plugin';
 import { Middlewares, ReduxApp } from './types';
 
 export { PayloadAction };
-export { useSelector } from 'react-redux';
+export { Provider, useSelector } from 'react-redux';
 
 export * from './plugins';
 export * from './hooks';
