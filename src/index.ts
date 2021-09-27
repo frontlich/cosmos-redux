@@ -18,6 +18,7 @@ import { Middlewares, ReduxApp } from './types';
 export { PayloadAction };
 export { Provider, useSelector } from 'react-redux';
 
+export { DEFAULT_LOADING_NAME } from './constant/plugin';
 export * from './plugins';
 export * from './hooks';
 export * from './thunks';
