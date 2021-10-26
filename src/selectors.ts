@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createDraftSafeSelector } from '@reduxjs/toolkit';
 
 type SelectorMap<T, S> = {
   [K in keyof T]: T[K] extends Record<string, any>
@@ -18,7 +18,7 @@ export const createSelectors = <T, State = any>(
     for (const key in currState) {
       if (Object.prototype.hasOwnProperty.call(currState, key)) {
         const value = currState[key];
-        const currSelector: any = createSelector(preSelector, s => s[key]);
+        const currSelector: any = createDraftSafeSelector(preSelector, s => s[key]);
 
         if (typeof value === 'object' && value !== null) {
           if (process.env.NODE_ENV === 'development') {
