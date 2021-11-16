@@ -8,7 +8,8 @@ export const createUseThunkLoading = (name: string = DEFAULT_LOADING_NAME) => {
       throw new TypeError('useLoading parameter "action" must be ActionsFromAsyncThunk');
     }
     return useSelector((state: any) => {
-      return state[name] && state[name].loading[action.typePrefix] || false;
+      const loadingMap = state[name] && state[name].loading;
+      return loadingMap ? !!loadingMap[action.typePrefix] : false;
     });
   };
 

@@ -1,4 +1,9 @@
-import { isAsyncThunkAction, isPending, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  isAsyncThunkAction,
+  isPending,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { Plugin } from '../types';
 import { DEFAULT_LOADING_NAME } from '../constant/plugin';
@@ -8,7 +13,7 @@ interface ThunkLoadingOptions {
 }
 
 export const createThunkLoadingPlugin = (
-  options?: ThunkLoadingOptions,
+  options?: ThunkLoadingOptions
 ): Plugin<{ name: string }> => {
   const { name = DEFAULT_LOADING_NAME } = options || {};
 
@@ -18,7 +23,10 @@ export const createThunkLoadingPlugin = (
       loading: {} as Record<string, boolean>,
     },
     reducers: {
-      setLoading(state, { payload }: PayloadAction<{ type: string; status: boolean }>) {
+      setLoading(
+        state,
+        { payload }: PayloadAction<{ type: string; status: boolean }>
+      ) {
         state.loading[payload.type] = payload.status;
       },
     },
@@ -29,11 +37,11 @@ export const createThunkLoadingPlugin = (
     reducer: {
       [name]: slice.reducer,
     },
-    middleware: () => (next) => (action) => {
+    middleware: ({ dispatch }) => next => action => {
       if (isAsyncThunkAction(action)) {
         const { type } = action as { type: string };
 
-        next({
+        dispatch({
           type: slice.actions.setLoading.type,
           payload: {
             type: type.slice(0, type.lastIndexOf('/')),
