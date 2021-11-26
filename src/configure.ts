@@ -84,8 +84,8 @@ export const configReduxApp = <
   const asyncReducers: Record<string, Reducer> = {};
 
   return {
-    addPlugin(p) {
-      plugin.add(p);
+    addPlugin(...plugins) {
+      plugin.add(...plugins);
       return this;
     },
     complete(cb) {
