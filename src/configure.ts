@@ -56,7 +56,7 @@ export const configStore = <
       } else if (Array.isArray(middleware)) {
         return [...pluginMiddleware, ...middleware];
       } else {
-        return getDefaultMiddleware() as any;
+        return [...getDefaultMiddleware(), ...pluginMiddleware] as any;
       }
     },
 

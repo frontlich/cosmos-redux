@@ -27,12 +27,12 @@ export type FunctionParam<T> = T extends () => void
   ? A
   : unknown;
 
-export type Plugin<Extra = unknown> = {
-  reducer?: ReducersMapObject;
+export type Plugin<S = any, A extends Action<any> = Action<any>> = {
+  reducer?: ReducersMapObject<S, A>;
   middleware?: Middleware;
   preloadState?: any;
   enhancers?: StoreEnhancer;
-} & Extra;
+};
 
 export type Middlewares<S> = ReadonlyArray<Middleware<{}, S>>;
 

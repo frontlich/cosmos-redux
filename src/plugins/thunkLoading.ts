@@ -14,35 +14,32 @@ interface ThunkLoadingOptions {
 
 export const createThunkLoadingPlugin = (
   options?: ThunkLoadingOptions
-): Plugin<{ name: string }> => {
+): Plugin<any, PayloadAction<{ type: string; status: boolean }>> => {
   const { name = DEFAULT_LOADING_NAME } = options || {};
 
-  const slice = createSlice({
+  const { actions, reducer } = createSlice({
     name,
-    initialState: {
-      loading: {} as Record<string, boolean>,
-    },
+    initialState: {} as Record<string, boolean>,
     reducers: {
       setLoading(
         state,
         { payload }: PayloadAction<{ type: string; status: boolean }>
       ) {
-        state.loading[payload.type] = payload.status;
+        state[payload.type] = payload.status;
       },
     },
   });
 
   return {
-    name,
     reducer: {
-      [name]: slice.reducer,
+      [name]: reducer,
     },
     middleware: ({ dispatch }) => next => action => {
       if (isAsyncThunkAction(action)) {
         const { type } = action as { type: string };
 
         dispatch({
-          type: slice.actions.setLoading.type,
+          type: actions.setLoading.type,
           payload: {
             type: type.slice(0, type.lastIndexOf('/')),
             status: isPending(action),
