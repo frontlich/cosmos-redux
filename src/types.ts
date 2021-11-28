@@ -41,7 +41,7 @@ export type ReduxApp<
   A extends Action = AnyAction,
   M extends Middlewares<S> = Middlewares<S>
 > = {
-  addPlugin(p: Plugin): ReduxApp<S, A, M>;
+  addPlugin(p: Plugin<any, any>): ReduxApp<S, A, M>;
   complete(callback?: () => void): ReduxApp<S, A, M>;
   getStore(): EnhancedStore<S, A, M>;
   createModel: typeof createModel;
