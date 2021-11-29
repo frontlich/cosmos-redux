@@ -30,7 +30,7 @@ export type FunctionParam<T> = T extends () => void
 export type Plugin<S = any, A extends Action<any> = Action<any>> = {
   reducer?: ReducersMapObject<S, A>;
   middleware?: Middleware;
-  preloadState?: any;
+  preloadState?: S;
   enhancers?: StoreEnhancer;
 };
 

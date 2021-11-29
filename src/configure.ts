@@ -53,10 +53,12 @@ export const configStore = <
           options =>
             [...getDefaultMiddleware(options), ...pluginMiddleware] as any
         );
-      } else if (Array.isArray(middleware)) {
-        return [...pluginMiddleware, ...middleware];
       } else {
-        return [...getDefaultMiddleware(), ...pluginMiddleware] as any;
+        return [
+          ...getDefaultMiddleware(),
+          ...pluginMiddleware,
+          ...(Array.isArray(middleware) ? middleware : []),
+        ] as any;
       }
     },
 
