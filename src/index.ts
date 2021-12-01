@@ -9,7 +9,7 @@ export {
   combineReducers,
   compose,
 } from '@reduxjs/toolkit';
-export { Provider, useSelector } from 'react-redux';
+export { Provider, useSelector, useDispatch } from 'react-redux';
 
 export { DEFAULT_LOADING_NAME } from './constant/plugin';
 export * from './plugins';
