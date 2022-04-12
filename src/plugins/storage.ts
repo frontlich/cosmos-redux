@@ -1,9 +1,10 @@
+import type { Reducer } from '@reduxjs/toolkit';
 import { Plugin } from '../types';
 
 interface Storage {
   readonly storageKey: string;
   set(v: object): void;
-  get(): void;
+  get(): any;
   remove(): void;
 }
 
@@ -43,8 +44,16 @@ export function createStoragePlugin(config?: StorageConfig): Plugin {
     return {};
   }
 
+  const initialState = storage.get();
+
+  const reducer: Record<string, Reducer> = {};
+  for (const key in initialState) {
+    reducer[key] = s => s;
+  }
+
   return {
-    preloadState: storage.get(),
+    preloadState: initialState,
+    reducer,
     enhancers: next => (...args) => {
       const store = next(...args);
       store.subscribe(() => {
