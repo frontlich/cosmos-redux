@@ -48,7 +48,7 @@ export function createStoragePlugin(config?: StorageConfig): Plugin {
 
   const reducer: Record<string, Reducer> = {};
   for (const key in initialState) {
-    reducer[key] = s => s;
+    reducer[key] = s => s || null;
   }
 
   return {
