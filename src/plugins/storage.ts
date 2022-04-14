@@ -1,5 +1,8 @@
 import type { Reducer } from '@reduxjs/toolkit';
-import { Plugin } from '../types';
+
+import { defaultReducer } from '../constant/utils';
+
+import type { Plugin } from '../types';
 
 interface Storage {
   readonly storageKey: string;
@@ -48,13 +51,13 @@ export function createStoragePlugin(config?: StorageConfig): Plugin {
 
   const reducer: Record<string, Reducer> = {};
   for (const key in initialState) {
-    reducer[key] = s => s || null;
+    reducer[key] = defaultReducer;
   }
 
   return {
     preloadState: initialState,
     reducer,
-    enhancers: next => (...args) => {
+    enhancer: next => (...args) => {
       const store = next(...args);
       store.subscribe(() => {
         const state: any = store.getState();

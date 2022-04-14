@@ -31,6 +31,8 @@ export type Plugin<S = any, A extends Action<any> = Action<any>> = {
   reducer?: ReducersMapObject<S, A>;
   middleware?: Middleware;
   preloadState?: S;
+  enhancer?: StoreEnhancer;
+  /** @deprecated */
   enhancers?: StoreEnhancer;
 };
 
@@ -58,5 +60,12 @@ export type BaseThunkAPI<
   RejectedMeta = unknown,
   FulfilledMeta = unknown,
   Extra = unknown,
-  D extends Dispatch = Dispatch,
-> = ToolkitBaseThunkAPI<State, Extra, D, RejectedValue, RejectedMeta, FulfilledMeta>;
+  D extends Dispatch = Dispatch
+> = ToolkitBaseThunkAPI<
+  State,
+  Extra,
+  D,
+  RejectedValue,
+  RejectedMeta,
+  FulfilledMeta
+>;

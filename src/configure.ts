@@ -10,6 +10,7 @@ import {
   ReducersMapObject,
 } from '@reduxjs/toolkit';
 
+import { defaultReducer } from './constant/utils';
 import { createModel } from './model';
 import plugin from './plugin';
 import { Middlewares, ReduxApp } from './types';
@@ -35,14 +36,16 @@ export const configStore = <
   const pluginReducer = plugin.get('reducer');
   const pluginMiddleware = plugin.get('middleware');
   const pluginPreloadState = plugin.get('preloadState');
-  const pluginEnhancers = plugin.get('enhancers');
+  /** @deprecated */
+  const _pluginEnhancers = plugin.get('enhancers');
+  const pluginEnhancers = plugin.get('enhancer');
 
   const reducers = Object.assign({}, ...pluginReducer, reducer || {});
 
   const finalReducer =
     Object.keys(reducers).length > 0
       ? combineReducers(reducers)
-      : (s: any) => s;
+      : defaultReducer;
 
   const store = configureStore({
     reducer: finalReducer,
@@ -69,7 +72,7 @@ export const configStore = <
     enhancers: (typeof enhancers === 'function'
       ? (defaultEnhancers: any) =>
           enhancers([...defaultEnhancers, ...pluginEnhancers] as any[])
-      : [...pluginEnhancers, ...enhancers]) as any,
+      : [..._pluginEnhancers, ...pluginEnhancers, ...enhancers]) as any,
   });
 
   return { ...store, __reducers: reducers } as any;
@@ -117,9 +120,15 @@ export const configReduxApp = <
 
       const initialReducers = (store as any).__reducers;
 
-      if (asyncReducers[name] || initialReducers[name]) {
+      if (asyncReducers[name]) {
         // 防止重复注入
         return this;
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        if (initialReducers[name] && initialReducers[name] !== defaultReducer) {
+          console.warn(`初始的reducer: ${name} 被覆盖了`);
+        }
       }
 
       asyncReducers[name] = reducer;
