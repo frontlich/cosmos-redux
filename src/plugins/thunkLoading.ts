@@ -35,6 +35,10 @@ export const createThunkLoadingPlugin = (
       [name]: reducer,
     },
     middleware: ({ dispatch }) => next => action => {
+      // 先执行next，再执行loading状态的改变，以便在loading结束之后能获取到结果的状态
+
+      const result = next(action);
+
       if (isAsyncThunkAction(action)) {
         const { type } = action as { type: string };
 
@@ -47,7 +51,7 @@ export const createThunkLoadingPlugin = (
         });
       }
 
-      return next(action);
+      return result;
     },
   };
 };
